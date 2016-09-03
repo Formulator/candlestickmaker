@@ -7,7 +7,7 @@ To view the app directly from a Bokeh server execute the command:
 
     bokeh serve --show /path/to/directory/candlestickmaker
     
-    or possibly if you downloaded a .zip file:
+or possibly if you downloaded a .zip file:
     
     bokeh serve --show /path/to/directory/candlestickmaker-master
     
