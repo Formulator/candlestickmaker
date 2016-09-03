@@ -1,4 +1,4 @@
-# candlestickmaker
+# OHLC_RT
 Demonstration of a Bokeh streaming & patching OHLC chart using fractally generated data.
 
 #### Running
