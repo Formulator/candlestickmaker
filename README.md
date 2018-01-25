@@ -14,3 +14,5 @@ or possibly if you downloaded a .zip file:
     
     
 This should open a browser window and after a few seconds the plot will begin to update.  Sufficient data is generated to run the simulation for 100 x 10 second candles.
+
+![Sample output](https://github.com/Formulator/candlestickmaker/blob/master/candlestickmaker.gif)
