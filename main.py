@@ -157,7 +157,7 @@ class Chart():
                 self.lo = val if val < self.lo else self.lo
                 self.cl = val
                 colour = "#09ff00" if self.op < self.cl else "#ff0000"
-                if realtime == True
+                if realtime == True:
                     #Determine index, accounting for rollover
                     self.index = min(self.rollover-1, self.count-1)
                     #print('Patch candle: realtime: ' + str(realtime) + ' index: ' + str(self.count-1) + ' cct: ' + str(self.candle_close_time) + ' o: ' + str(self.op) + ' h: ' + str(self.hi) + ' l: ' + str(self.lo) + ' c: ' + str(self.cl))
