@@ -70,7 +70,11 @@ class Chart():
     def __init__ (self, document, datum, tz, interval, history, ticks):
         
         #Instance variables stored across method calls for candlestickmaker function
-        self.count = 0;
+        self.count = 0
+        #Rollover; parameter of patch(), maximum candles on the chart.
+        self.rollover = 105
+        #Index; indicates which element to update in patch()
+        self.index = 0
         self.op, self.hi, self.lo, self.cl = 0, 0, 0, 0
         self.time_delta = dt.timedelta(seconds=interval)
         self.begin_dt = datum.replace(tzinfo=timezone(tz)) - (self.time_delta * history)
@@ -97,7 +101,7 @@ class Chart():
         #Candle width
         self.p = figure(webgl=True) # for the plotting API
         self.w = interval * 500                
-        self.p = figure(plot_height=500, tools="xpan,xwheel_zoom,xbox_zoom,reset", x_axis_type="datetime", y_axis_location="right", title = "Synthesised Fractal Candlestick")
+        self.p = figure(plot_height=500, tools="xpan,xwheel_zoom,xbox_zoom,reset", x_axis_type="datetime", y_axis_location="right", title = "Synthesised Fractal Candlesticks")
         self.p.xaxis.major_label_orientation = pi/4
         self.p.grid.grid_line_alpha=0.3
         self.p.background_fill_color = "#000000"        
@@ -136,8 +140,8 @@ class Chart():
                 else:
                     print('Stream completed candle: realtime: ' + str(realtime) + ' cnt: ' + str(self.count) + ' cct: ' + str(self.candle_close_time) + ' o: ' + str(self.op) + ' h: ' + str(self.hi) + ' l: ' + str(self.lo) + ' c: ' + str(self.cl))
                     colour = "#09ff00" if self.op < self.cl else "#ff0000"
-                    self.source.stream({'d':[self.candle_close_time], 'o':[self.op], 'h':[self.hi], 'l':[self.lo], 'c':[self.cl], 'clr':[colour]}, 300)#stream completed candle
-                    self.count += 1                    
+                    self.source.stream({'d':[self.candle_close_time], 'o':[self.op], 'h':[self.hi], 'l':[self.lo], 'c':[self.cl], 'clr':[colour]}, self.rollover)#stream completed candle
+                    self.count += 1
                     #increment to the next candle
                     self.candle_close_time += self.time_delta
                     #Reset
@@ -153,10 +157,12 @@ class Chart():
                 self.lo = val if val < self.lo else self.lo
                 self.cl = val
                 colour = "#09ff00" if self.op < self.cl else "#ff0000"
-                if realtime == True:
+                if realtime == True
+                    #Determine index, accounting for rollover
+                    self.index = min(self.rollover-1, self.count-1)
                     #print('Patch candle: realtime: ' + str(realtime) + ' index: ' + str(self.count-1) + ' cct: ' + str(self.candle_close_time) + ' o: ' + str(self.op) + ' h: ' + str(self.hi) + ' l: ' + str(self.lo) + ' c: ' + str(self.cl))
-                    self.source.patch({'d':[(self.count-1, self.candle_close_time)], 'o':[(self.count-1, self.op)], 'h':[(self.count-1,self.hi)], 'l':[(self.count-1, self.lo)], 'c':[(self.count-1, self.cl)], 'clr':[(self.count-1, colour)]})#patch updated candle
-        
+                    self.source.patch({'d':[(self.index, self.candle_close_time)], 'o':[(self.index, self.op)], 'h':[(self.index, self.hi)], 'l':[(self.index, self.lo)], 'c':[(self.index, self.cl)], 'clr':[(self.index, colour)]})#patch updated candle
+ 
 #Helper method    
 def seconds_since_epoch(dt_value):
         return (dt_value - dt.datetime.utcfromtimestamp(0)).total_seconds()
